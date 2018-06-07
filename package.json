@@ -1,0 +1,12 @@
+{
+  "name": "ab-dev",
+  "version": "0.0.3",
+  "bin": {
+    "ab": "./bin/exec.js"
+  },
+  "preferGlobal": true,
+  "dependencies": {
+    "ab-fs": "0.0.3",
+    "nodegit": "0.22.*"
+  }
+}
