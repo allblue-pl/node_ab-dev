@@ -1,5 +1,14 @@
 #!/usr/bin/env node
 
-var abDev = require('..');
+const
+    abLog = require('ab-log'),
 
-abDev.exec(process.argv.slice(2));
+    abDev = require('../.')
+;
+
+(async function() {
+    await abDev.execAsync(process.argv.slice(2));
+        })()
+    .catch((err) => {
+        abLog.error('Error:', err);
+    });

@@ -1,12 +1,14 @@
 {
   "name": "ab-dev",
-  "version": "0.0.4",
+  "version": "0.0.16",
   "bin": {
     "ab": "./bin/exec.js"
   },
   "preferGlobal": true,
   "dependencies": {
-    "ab-fs": "0.0.3",
-    "nodegit": "0.22.*"
+    "ab-fs": "0.0.*",
+    "ab-log": "1.0.*",
+    "ab-package": "0.0.*",
+    "nodegit": "0.27.*"
   }
 }
