@@ -1,0 +1,7 @@
+{
+    "abDependencies": {
+        "ab-fs": "https://github.com/allblue-pl/node_ab-fs",
+        "ab-log": "https://github.com/allblue-pl/node_ab-log",
+        "ab-package": "https://github.com/allblue-pl/node_ab-package"
+    }
+}

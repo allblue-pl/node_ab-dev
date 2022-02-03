@@ -7,7 +7,7 @@ const
 ;
 
 (async function() {
-    await abDev.execAsync(process.argv.slice(2));
+    await abDev.exec_Async(process.argv.slice(2));
         })()
     .catch((err) => {
         abLog.error('Error:', err);
