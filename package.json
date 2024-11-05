@@ -1,6 +1,6 @@
 {
   "name": "ab-dev",
-  "version": "0.0.26",
+  "version": "0.0.28",
   "bin": {
     "ab": "./bin/exec.js"
   },
@@ -8,6 +8,6 @@
   "dependencies": {
     "ab-fs": "0.0.*",
     "ab-log": "1.0.*",
-    "ab-package": "0.0.*"
+    "simple-git": "3.*.*"
   }
 }
