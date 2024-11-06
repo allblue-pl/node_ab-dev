@@ -9,7 +9,7 @@ const
 // console.log(new ABInfo('./test/.ab-dev'));
 
 (async () => {
-    await helper.git_HasUnstagedChanges('.');
+    console.log(await helper.git_HasUnstagedChanges('.'));
         })()
     .catch((err) => {
         console.error(err);
