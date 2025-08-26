@@ -1,6 +1,6 @@
 {
   "name": "ab-dev",
-  "version": "0.0.30",
+  "version": "0.0.31",
   "bin": {
     "ab": "./bin/exec.js"
   },
