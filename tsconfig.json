@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "allowImportingTsExtensions": true,
+        "erasableSyntaxOnly": true,
+        "noEmit": true,
+        "strict": true,
+        "target": "esnext",
+        "types": ["node"]
+    },
+    "useDefineForClassFields": true,
+    "verbatimModuleSyntax": true
+}

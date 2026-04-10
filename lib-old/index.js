@@ -5,7 +5,8 @@ const
     path = require('path'),
 
     check = require('./check'),
-    installAsync = require('./installAsync')
+    installAsync = require('./installAsync'),
+    validate = require('./validate')
 ;
 
 async function exec_Async(args) {
@@ -30,6 +31,8 @@ async function exec_Async(args) {
         await installAsync(args.slice(1));
     } else if (args[0] === 'check') {
         await check(process.cwd());
+    } else if (args[0] === 'validate') {
+        await validate(process.cwd());
     }
 };
 module.exports.exec_Async = exec_Async;
@@ -38,3 +41,8 @@ async function check_Async(pkgPath) {
     return await check(pkgPath);
 }
 module.exports.check_Async = check_Async;
+
+async function validate_Async(pkgPath) {
+    return await validate(pkgPath);
+}
+module.exports.validate_Async = validate_Async;

@@ -1,13 +1,17 @@
 {
   "name": "ab-dev",
-  "version": "0.0.33",
+  "version": "0.1.0",
+  "type": "module",
   "bin": {
-    "ab": "./bin/exec.js"
+    "ab": "./bin/exec.ts"
   },
   "preferGlobal": true,
   "dependencies": {
     "ab-fs": "0.0.*",
     "ab-log": "1.0.*",
-    "simple-git": "3.*.*"
+    "simple-git": "3.27.*"
+  },
+  "devDependencies": {
+    "@types/node": "25.5.*"
   }
 }

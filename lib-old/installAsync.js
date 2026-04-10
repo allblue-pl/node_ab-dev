@@ -78,10 +78,17 @@ async function installAsync(args) {
                 pkgPath: depPkgPath,
             });
 
-            if (args[0] === 'git')
-                await installAsync_Git(pkgPath, abInfo, depPkgName, depPkgPath);
-            else if (args[0] === 'link')
-                await installAsync_Link_NoCopy(pkgPath, abInfo, depPkgName, depPkgPath);
+            if (args[0] === 'git') {
+                if (!(await installAsync_Git(pkgPath, abInfo, depPkgName, 
+                        depPkgPath)))
+                    return;
+            } else if (args[0] === 'link') {
+                if (!(await installAsync_Link_NoCopy(pkgPath, abInfo, depPkgName, 
+                        depPkgPath))) {
+                    console.error('Cannot install link without copy:', pkgPath);
+                    return;
+                }
+            }
 
             if (fs.existsSync(path.join(depPkgPath, '.ab-dev'))) {
                 let abInfo_New = new ABInfo(path.join(depPkgPath, '.ab-dev'));
@@ -96,8 +103,12 @@ async function installAsync(args) {
             }
         }
 
-        if (args[0] === 'link')
-            await installAsync_Links(pkgPath, depPkgsList);
+        if (args[0] === 'link') {
+            if (!(await installAsync_Links(pkgPath, depPkgsList))) {
+                console.error('Cannot install links:', pkgPath);
+                return;
+            }
+        }
     } else if (args.length > 1) {
         let depPkgName = args[1];
         if (!depPkgName in abInfo.info.abDependencies)
@@ -110,10 +121,16 @@ async function installAsync(args) {
             pkgPath: depPkgPath,
         });
 
-        if (args[0] === 'git')
-            await installAsync_Git( pkgPath, abInfo, depPkgName, depPkgPath);
-        else if (args[0] === 'link')
-            await installAsync_Link(pkgPath, abInfo, depPkgName, depPkgPath);
+        if (args[0] === 'git') {
+            if (!(await installAsync_Git( pkgPath, abInfo, depPkgName, 
+                    depPkgPath)))
+                return;
+        } else if (args[0] === 'link') {
+            if (!(await installAsync_Link(pkgPath, abInfo, depPkgName, depPkgPath))) {
+                console.error('Cannot install link:', pkgPath);
+                return;
+            }
+        }
     }
 
     await installNPMDependenciesAsync(abInfo, pkgPath);
@@ -171,18 +188,20 @@ async function installAsync_Link(pkgPath, abInfo, depPkgName, depPkgPath) {
                 { cwd: pkgPath, }, (error, stdout, stderr) => {
             console.log(`Linking '${depPkgName}': `, stdout, stderr);
 
-            if (error !== null)
-                console.log(`Error linking '${depPkgName}':`, error);
+            if (error !== null) {
+                console.error(`Error linking '${depPkgName}':`, error);
+                resolve(false);
+            }
 
             copyDummyPackage(pkgPath, depPkgName, depPkgPath);
 
-            resolve();
+            resolve(true);
         });
     });
 }
 
 async function installAsync_Link_NoCopy(pkgPath, abInfo, depPkgName, depPkgPath) {
-    await new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         if (fs.existsSync(depPkgPath))
             abFS.rmdirRecursiveSync(depPkgPath);
 
@@ -190,16 +209,25 @@ async function installAsync_Link_NoCopy(pkgPath, abInfo, depPkgName, depPkgPath)
                 { cwd: pkgPath, }, (error, stdout, stderr) => {
             console.log(`Linking without copy '${depPkgName}': `, stdout, stderr);
 
-            if (error !== null)
-                console.log(`Error linking '${depPkgName}':`, error);
+            if (error !== null) {
+                console.error(`Error linking '${depPkgName}':`, error);
+                resolve(false);
+            }
 
-            resolve();
+            validateLinkedBranch_Async(depPkgName, depPkgPath, 
+                    abInfo.info.abDependencies[depPkgName].branch)
+                .then((result) => {
+                    resolve(result);
+                })
+                .catch((err) => {
+                    reject(err);
+                });
         });
     });
 }
 
 async function installAsync_Links(pkgPath, depPkgsList) {
-    await new Promise((resolve, reject) => {
+    return await new Promise((resolve, reject) => {
         let depPkgNames = [];
         for (let depPkg of depPkgsList) {
             if (fs.existsSync(depPkg.pkgPath))
@@ -213,13 +241,15 @@ async function installAsync_Links(pkgPath, depPkgsList) {
                 { cwd: pkgPath, }, (error, stdout, stderr) => {
             console.log(`Linking '${depPkgNames_Str}': `, stdout, stderr);
 
-            if (error !== null)
-                console.log(`Error linking '${depPkgNames_Str}':`, error);
+            if (error !== null) {
+                console.error(`Error linking '${depPkgNames_Str}':`, error);
+                resolve(false);
+            }
 
             for (let depPkg of depPkgsList)
                 copyDummyPackage(pkgPath, depPkg.pkgName, depPkg.pkgPath);
 
-            resolve();
+            resolve(true);
         });
     });
 }
@@ -233,7 +263,7 @@ async function installDependenciesAsync(pkgPath, pkgName) {
             if (error !== null)
                 abLog.error(`Error installing '${pkgName}':`, error);
 
-            resolve();
+            resolve(true);
         });
     });
 }
@@ -278,7 +308,7 @@ async function installNPMDependenciesAsync(abInfo, pkgPath) {
             if (error !== null)
                 abLog.error(`Error installing dummy dependencies:`, error);
 
-            resolve();
+            resolve(true);
         });
     });
 
@@ -329,6 +359,29 @@ function removeDependencies(abInfo, pkgPath, pkgName) {
                 fs.unlinkSync(depPkgPath);
         }
     }
+}
+
+async function validateLinkedBranch_Async(depPkgName, depPkgPath, branch) {
+    let depPkgPath_Real = fs.realpathSync(depPkgPath);
+
+    let repo = simpleGit(depPkgPath_Real);
+    let branchSummary = await repo.branchLocal();
+    if (branchSummary.current === branch)
+        return true;
+    else if (!(branch in branchSummary.branches)) {
+        console.error(`Branch '${branch}' does not exist in '${depPkgName}'.`);
+        return false;
+    } 
+
+    if (await helper.git_HasUnstagedChanges_Async(depPkgPath_Real)) {
+        console.error(`Repo '${depPkgName}:${branchSummary.current}'` +
+                ` has unstaged changes. Cannot change branch.`);
+        return false;
+    }
+
+    await repo.checkout(branch);
+
+    return true;
 }
 
 
