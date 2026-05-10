@@ -1,19 +1,19 @@
-'use strict';
-
-const
-    simpleGit = require('simple-git')
-;
+import { simpleGit, type SimpleGit } from "simple-git";
 
 class helper_Class {
-    async git_HasUnstagedChanges_Async(pkgPath) {
-        let r = simpleGit(pkgPath);
-        let res = await r.status();
-        if (!res.isClean()) {
+    constructor() {
+        
+    }
+
+    async git_HasUnstagedChanges_Async(pkgPath: string) {
+        let r: SimpleGit = simpleGit(pkgPath);
+        let status = await r.status();
+        if (!status.isClean()) {
             console.warn(`'${pkgPath}' not clean.`);
             return true;
         }
 
-        res = await r.branch();
+        let res = await r.branch();
 
         if (!(`remotes/origin/${res.current}` in res.branches)) {
             console.warn(`'${pkgPath}' remote branch '${res.current}'` +
@@ -24,6 +24,6 @@ class helper_Class {
         return res.branches[res.current].commit !== 
                 res.branches[`remotes/origin/${res.current}`].commit;
     }
-
 }
-module.exports = new helper_Class();
+const helper = new helper_Class();
+export default helper;

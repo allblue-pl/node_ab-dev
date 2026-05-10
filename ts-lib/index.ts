@@ -8,7 +8,7 @@ import url from "node:url";
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-class abDev_Class {
+export class abDev_Class {
     async check_Async(pkgPath: string) {
         return await check.checkPkgPath(pkgPath);
     }

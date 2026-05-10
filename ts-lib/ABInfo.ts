@@ -1,33 +1,30 @@
-'use strict';
+import fs from "fs";
+import path from "path";
 
-const
-    fs = require('fs'),
-    path = require('path')
-;
+export default class ABInfo {
+    info: ABDependenciesInfo;
 
-class ABInfo {
-    constructor(fsPath) {
-        if (!fs.existsSync(fsPath)) {
+    constructor(fsPath: string) {
+        if (!fs.existsSync(fsPath))
             throw new Error(`'.ab-dev' does not exist in '${fsPath}'.`);
-        }
 
         let lstat = fs.lstatSync(fsPath);
 
         if (lstat.isFile())
-            this.info = this._getInfo_FromFile(fsPath);
+            this.info = this.#getInfo_FromFile(fsPath);
         else if (lstat.isDirectory())
-            this.info = this._getInfo_FromDirectory(fsPath);
+            this.info = this.#getInfo_FromDirectory(fsPath);
         else
             throw new Error(`No idea what '.ab-dev' actually is.`);
     }
 
-    _addNewInfo(info, newInfo) {
+    #addNewInfo(info: ABDependenciesInfo, newInfo: ABDependenciesInfo_Raw) {
         if ('abDependencies' in newInfo) {
             for (let propName in newInfo.abDependencies) {
-                let repoUrl = newInfo.abDependencies[propName];
-                let repoBranch = 'main';
+                let repoUrl: string = newInfo.abDependencies[propName];
+                let repoBranch: string = 'main';
 
-                let repoArr = repoUrl.split('#');
+                let repoArr: Array<string> = repoUrl.split('#');
                 if (repoArr.length > 2)
                     throw new Error(`Wrong repo format '${repoUrl}'.`);
                 else if (repoArr.length === 2) {
@@ -50,8 +47,7 @@ class ABInfo {
         }
     }
 
-    _getInfo_FromDirectory(fsPath)
-    {
+    #getInfo_FromDirectory(fsPath: string) {
         let fileFSPaths = fs.readdirSync(fsPath);
 
         let info = {
@@ -64,34 +60,40 @@ class ABInfo {
 
             let info_New = null;
             try {
-                info_New = JSON.parse(fs.readFileSync(
-                        path.join(fsPath, fileFSPath)));
+                info_New = JSON.parse(fs.readFileSync(path.join(fsPath, 
+                        fileFSPath)).toString());
             } catch (err) {
                 throw new Error(`Cannot parse '${fileFSPath}': ` + err);
             }
 
-            this._addNewInfo(info, info_New);
+            this.#addNewInfo(info, info_New);
         }
 
         return info;
     }
 
-    _getInfo_FromFile(fsPath)
-    {
+    #getInfo_FromFile(fsPath: string) {
          let info = {
             abDependencies: {},
         };
 
         let info_New = null;
         try {
-            info_New = JSON.parse(fs.readFileSync(fsPath));
+            info_New = JSON.parse(fs.readFileSync(fsPath).toString());
         } catch (err) {
             throw new Error(`Cannot parse '.ab-dev': ` + err);
         }
 
-        this._addNewInfo(info, info_New);
+        this.#addNewInfo(info, info_New);
 
         return info;
     }
 }
-module.exports = ABInfo;
+
+interface ABDependenciesInfo {
+    abDependencies: { [key:string]: { url: string, branch: string }},
+};
+
+interface ABDependenciesInfo_Raw {
+    abDependencies: { [key: string]: string },
+};

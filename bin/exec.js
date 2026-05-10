@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import abDev from "../index.ts";
+import abDev from "../index.js";
 import abLog from "ab-log";
 
 (async function() {
