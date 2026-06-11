@@ -11,7 +11,7 @@ class validate_Class {
         
     }
 
-    async validatePkgPath(pkgPath: string) {
+    async validatePkgPath(pkgPath: string): Promise<boolean> {
         // let pkgPath = process.cwd();
         let abInfo: ABInfo = new ABInfo(path.join(pkgPath, '.ab-dev'));
 

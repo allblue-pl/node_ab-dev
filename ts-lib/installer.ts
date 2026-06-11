@@ -9,26 +9,15 @@ import { simpleGit, type SimpleGit } from "simple-git";
 import helper from "./helper.ts";
 
 import ABInfo from "./ABInfo.ts";
+import ABLockInfo from "./ABLockInfo.ts";
 
 class installer_Class {
     constructor() {
         
     }
 
-    async install_Async(args: Array<string>) {
-        let installTypes = [ 'link', 'git' ];
-
-        if (args.length < 1) {
-            console.log('Install type not set. Available install types: ' + installTypes);
-            return;
-        }
-
-        if (!installTypes.includes(args[0])) {
-            console.log('Unknown install type. Available install types: ' + installTypes);
-            return;
-        }
-
-        let pkgPath = process.cwd();
+    async install_Async(pkgPath: string, installType: "link"|"git",
+            depPkgName: string|null = null) {
         let abInfo = new ABInfo(path.join(pkgPath, '.ab-dev'));
         let depPkgsList: Array<{ pkgName: string, pkgPath: string }> = [];
 
@@ -40,7 +29,7 @@ class installer_Class {
         fs.mkdirSync(path.join(tempPath, 'dummy-node-modules'));
         /* Temp */
 
-        if (args.length === 1) {
+        if (depPkgName === null) {
             let depPkgNames_New = Object.keys(abInfo.info.abDependencies);
             for (let i = 0; i < depPkgNames_New.length; i++) {
                 let depPkgName = depPkgNames_New[i];
@@ -61,11 +50,11 @@ class installer_Class {
                     pkgPath: depPkgPath,
                 });
 
-                if (args[0] === 'git') {
+                if (installType === 'git') {
                     if (!(await this.#installAsync_Git(pkgPath, abInfo, 
                             depPkgName, depPkgPath)))
                         return;
-                } else if (args[0] === 'link') {
+                } else if (installType === 'link') {
                     if (!(await this.#installAsync_Link_NoCopy(pkgPath, abInfo, 
                             depPkgName, depPkgPath))) {
                         console.error('Cannot install link without copy:', pkgPath);
@@ -87,39 +76,41 @@ class installer_Class {
                 }
             }
 
-            if (args[0] === 'link') {
+            if (installType === 'link') {
                 if (!(await this.#installAsync_Links(pkgPath, depPkgsList))) {
                     console.error('Cannot install links:', pkgPath);
                     return;
                 }
             }
-        } else if (args.length > 1) {
-            throw new Error("Installing single package not implemented.");
+        } else {
+            // throw new Error("Installing single package not implemented.");
+            
+            // if (!(depPkgName in abInfo.info.abDependencies))
+            //     throw new Error(`AB dependecy '${depPkgName}' does not exist.`);
 
-            let depPkgName = args[1];
-            if (!(depPkgName in abInfo.info.abDependencies))
-                throw new Error(`AB dependecy '${depPkgName}' does not exist.`);
+            // let depPkgPath = path.join(pkgPath, 'node_modules', depPkgName);
 
-            let depPkgPath = path.join(pkgPath, 'node_modules', depPkgName);
+            // depPkgsList.push({
+            //     pkgName: depPkgName,
+            //     pkgPath: depPkgPath,
+            // });
 
-            depPkgsList.push({
-                pkgName: depPkgName,
-                pkgPath: depPkgPath,
-            });
-
-            if (args[0] === 'git') {
-                if (!(await this.#installAsync_Git(pkgPath, abInfo, depPkgName, 
-                        depPkgPath)))
-                    return;
-            } else if (args[0] === 'link') {
-                if (!(await this.#installAsync_Link(pkgPath, abInfo, depPkgName, depPkgPath))) {
-                    console.error('Cannot install link:', pkgPath);
-                    return;
-                }
-            }
+            // if (args[0] === 'git') {
+            //     if (!(await this.#installAsync_Git(pkgPath, abInfo, depPkgName, 
+            //             depPkgPath)))
+            //         return;
+            // } else if (args[0] === 'link') {
+            //     if (!(await this.#installAsync_Link(pkgPath, abInfo, depPkgName, depPkgPath))) {
+            //         console.error('Cannot install link:', pkgPath);
+            //         return;
+            //     }
+            // }
         }
 
         await this.#installNPMDependenciesAsync(abInfo, pkgPath);
+
+        let abLockInfo = new ABLockInfo(installType, abInfo.getInfoHash());
+        abLockInfo.save(pkgPath);
     }
 
 
@@ -440,7 +431,7 @@ class installer_Class {
                 JSON.stringify(abDevMainPackageJSON));
 
         await new Promise((resolve, reject) => {
-            childProcess.exec(`npm install`,
+            childProcess.exec(`npm install --production`,
                     { cwd: tempPath, }, (error, stdout, stderr) => {
                 console.log(`Installing dummy dependencies: `, stdout, stderr);
 

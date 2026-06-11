@@ -16,20 +16,20 @@ class check_Class {
         // let pkgPath = process.cwd();
         let abInfo = new ABInfo(path.join(pkgPath, '.ab-dev'));
 
-        let pkgNames_ToCheck = Object.keys(abInfo.info.abDependencies);
-        for (let i = 0; i < pkgNames_ToCheck.length; i++) {
-            let pkgName = pkgNames_ToCheck[i]; 
-            let depPkgPath = path.join(pkgPath, 'node_modules', pkgName);            
+        let depPkgNames_ToCheck = Object.keys(abInfo.info.abDependencies);
+        for (let i = 0; i < depPkgNames_ToCheck.length; i++) {
+            let depPkgName = depPkgNames_ToCheck[i]; 
+            let depPkgPath = path.join(pkgPath, 'node_modules', depPkgName);            
             if (!fs.existsSync(depPkgPath)) {
-                console.log(`${pkgName}':`, abLog.cWarn(`Not initiated.`));
+                console.log(`${depPkgName}':`, abLog.cWarn(`Not initiated.`));
                 continue;
             }
 
             try {
                 if (await helper.git_HasUnstagedChanges_Async(depPkgPath))
-                    console.log(`${pkgName}':`, abLog.cWarn(`Unstaged changes.`));
+                    console.log(`${depPkgName}':`, abLog.cWarn(`Unstaged changes.`));
                 else
-                    console.log(`${pkgName}':`, abLog.cSuccess(`Ok.`));
+                    console.log(`${depPkgName}':`, abLog.cSuccess(`Ok.`));
             } catch (err) {
                 console.error(err);
             }
@@ -37,12 +37,12 @@ class check_Class {
             if (fs.existsSync(path.join(depPkgPath, '.ab-dev'))) {
                 let abInfo_New = new ABInfo(path.join(depPkgPath, '.ab-dev'));
                 for (let depPkgName_New in abInfo_New.info.abDependencies) {
-                    if (pkgNames_ToCheck.includes(depPkgName_New))
+                    if (depPkgNames_ToCheck.includes(depPkgName_New))
                             continue;
 
                     abInfo.info.abDependencies[depPkgName_New] = 
                             abInfo_New.info.abDependencies[depPkgName_New];
-                    pkgNames_ToCheck.push(depPkgName_New);
+                    depPkgNames_ToCheck.push(depPkgName_New);
                 }
             }
         }
