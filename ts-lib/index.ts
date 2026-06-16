@@ -2,22 +2,23 @@ import fs from "node:fs";
 import path from "node:path";
 import check from "./check.ts";
 import installer from "./installer.ts";
-import jsLegacy from "./js-legacy/index.ts";
 import validate from "./validate.ts";
 import url from "node:url";
 import ABInfo from "./ABInfo.ts";
 import ABLockInfo from "./ABLockInfo.ts";
+import { abJSLegacy, abTSBuilder } from "@allblue/ab-ts-parser";
+import buildTS from "./build-ts.ts";
 
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export class abDev_Class {
-    async check_Async(pkgPath: string) {
+    async check_Async(pkgPath: string): Promise<void> {
         return await check.checkPkgPath(pkgPath);
     }
 
-    async exec_Async(args: Array<string>) {
-        let actionTypes = [ 'install', 'check', '-v' ];
+    async exec_Async(args: Array<string>): Promise<void> {
+        let actionTypes = [ 'install', 'check', '-v', 'fix-js', 'watch-ts' ];
 
         if (args.length < 0) {
             console.log('Action not set. Available actions: ' + actionTypes);
@@ -55,7 +56,9 @@ export class abDev_Class {
         else if (args[0] === 'validate')
             await validate.validatePkgPath(process.cwd());
         else if (args[0] === "fix-js")
-            await jsLegacy.replace_Async(".");
+            await abJSLegacy.replace_Async(".");
+        else if (args[0] === "watch-ts")
+            buildTS.watchTS(".");
         else
             console.error("Unknown action.");
     }

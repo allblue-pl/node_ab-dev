@@ -12,7 +12,7 @@ class check_Class {
         
     }
 
-    async checkPkgPath(pkgPath: string) {
+    async checkPkgPath(pkgPath: string): Promise<void> {
         // let pkgPath = process.cwd();
         let abInfo = new ABInfo(path.join(pkgPath, '.ab-dev'));
 

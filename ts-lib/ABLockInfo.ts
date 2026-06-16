@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 export default class ABLockInfo {
-    static Load(pkgPath: string) {
+    static Load(pkgPath: string) : ABLockInfo {
         let fsPath = path.join(pkgPath, ".ab-dev-lock");
 
         if (!fs.existsSync(fsPath))
@@ -42,7 +42,7 @@ export default class ABLockInfo {
         return abInfo.getInfoHash() === this.#hash;
     }
 
-    save(pkgPath: string) {
+    save(pkgPath: string): void {
         let fsPath = path.join(pkgPath, ".ab-dev-lock");
 
         let jsonStr = JSON.stringify({

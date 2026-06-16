@@ -17,7 +17,7 @@ class installer_Class {
     }
 
     async install_Async(pkgPath: string, installType: "link"|"git",
-            depPkgName: string|null = null) {
+            depPkgName: string|null = null): Promise<void> {
         let abInfo = new ABInfo(path.join(pkgPath, '.ab-dev'));
         let depPkgsList: Array<{ pkgName: string, pkgPath: string }> = [];
 
@@ -114,7 +114,7 @@ class installer_Class {
     }
 
 
-    #copyDummyPackage(pkgPath: string, depPkgName: string, depPkgPath: string) {
+    #copyDummyPackage(pkgPath: string, depPkgName: string, depPkgPath: string): void {
         let tempPath = path.join(pkgPath, '.ab-dev-temp');
         let dummyPkgDirPath = path.join(tempPath, 'dummy-node-modules', 
                 depPkgName);
@@ -396,7 +396,7 @@ class installer_Class {
     //     });
     // }
 
-    async #installNPMDependenciesAsync(abInfo: ABInfo, pkgPath: string) {
+    async #installNPMDependenciesAsync(abInfo: ABInfo, pkgPath: string): Promise<void> {
         let abDevMainPackageJSON: { name: string, version: string, 
                 dependencies: { [key:string]: string} } = {
             name: "ab-dev-temp",
@@ -503,7 +503,7 @@ class installer_Class {
     // }
 
     async #validateLinkedBranch_Async(depPkgName: string, depPkgPath: string, 
-                branch: string) {
+                branch: string): Promise<boolean> {
         let depPkgPath_Real = fs.realpathSync(depPkgPath);
 
         let repo: SimpleGit = simpleGit(depPkgPath_Real);

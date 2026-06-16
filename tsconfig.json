@@ -2,12 +2,14 @@
     "compilerOptions": {
         "allowImportingTsExtensions": true,
         "declaration": true,
+        "declarationDir": "./ts-types",
         "declarationMap": true,
+        "emitDeclarationOnly": true,
         "erasableSyntaxOnly": true,
         "module": "nodenext",
         "outDir": "lib",
         "rewriteRelativeImportExtensions": true,
-        "rootDir": "ts-lib",
+        "rootDir": ".",
         "strict": true,
         "target": "esnext",
         "typeRoots": [
@@ -18,8 +20,10 @@
         "verbatimModuleSyntax": true
     },
     "exclude": [
-        "./index.d.ts",
+        "index.ts",
         "./lib/**/*",
-        "./tests/**/*"
+        "./ts-types/**/*",
+        "./tests/**/*",
+        "./build.ts"
     ]
 }

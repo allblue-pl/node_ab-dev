@@ -1,0 +1,6 @@
+{
+    "abDependencies": {
+        "@allblue/ab-ts-parser": "https://github.com/allblue-pl/node_ab-ts-parser",
+        "ab-fs": "https://github.com/allblue-pl/node_ab-fs"
+    }
+}

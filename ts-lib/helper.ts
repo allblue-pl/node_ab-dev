@@ -5,7 +5,7 @@ class helper_Class {
         
     }
 
-    async git_HasUnstagedChanges_Async(pkgPath: string) {
+    async git_HasUnstagedChanges_Async(pkgPath: string): Promise<boolean> {
         let r: SimpleGit = simpleGit(pkgPath);
         let status = await r.status();
         if (!status.isClean()) {

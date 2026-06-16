@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 
 export default class ABInfo {
-    static Load(pkgFSPath: string) {
+    static Load(pkgFSPath: string): ABInfo {
         let abInfo = new ABInfo(path.join(pkgFSPath, '.ab-dev'));
 
         let depPkgsList: Array<{ pkgName: string, pkgPath: string }> = [];
@@ -63,7 +63,7 @@ export default class ABInfo {
         return JSON.stringify(this.info);
     };
 
-    #addNewInfo(info: ABDependenciesInfo, newInfo: ABDependenciesInfo_Raw) {
+    #addNewInfo(info: ABDependenciesInfo, newInfo: ABDependenciesInfo_Raw): void {
         if ('abDependencies' in newInfo) {
             for (let propName in newInfo.abDependencies) {
                 let repoUrl: string = newInfo.abDependencies[propName];
@@ -92,7 +92,7 @@ export default class ABInfo {
         }
     }
 
-    #getInfo_FromDirectory(fsPath: string) {
+    #getInfo_FromDirectory(fsPath: string): ABDependenciesInfo  {
         let fileFSPaths = fs.readdirSync(fsPath);
 
         let info = {
@@ -117,7 +117,7 @@ export default class ABInfo {
         return info;
     }
 
-    #getInfo_FromFile(fsPath: string) {
+    #getInfo_FromFile(fsPath: string): ABDependenciesInfo {
          let info = {
             abDependencies: {},
         };

@@ -8,12 +8,11 @@
   },
   "preferGlobal": true,
   "dependencies": {
-    "ab-fs": "0.1.*",
     "ab-log": "1.1.*",
     "simple-git": "3.36.*"
   },
   "devDependencies": {
     "@types/node": "25.6.*",
-    "typescript": "^6.0.2"
+    "typescript": "6.0.*"
   }
 }
