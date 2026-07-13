@@ -72,7 +72,7 @@ export class abDev_Class {
 
         let abInfo = ABInfo.Load(pkgPath);
         
-        if (!abLockInfo.isValid(abInfo)) {
+        if (!abLockInfo.isValid(abInfo) || !(await validate.validatePkgPath(pkgPath))) {
             console.warn(`'.ab-dev-lock' not valid in '${pkgPath}'. Re-installing.`);
             // console.log('.ab-dev:      ' + abInfo.getInfoHash());
             // console.log('.ab-dev-lock: ' + abLockInfo.hash);
@@ -82,8 +82,6 @@ export class abDev_Class {
                     abInfo.getInfoHash());
             abLockInfo_New.save(pkgPath);
         }
-
-        // return await validate.validatePkgPath(pkgPath);
     }
 }
 const abDev = new abDev_Class();
