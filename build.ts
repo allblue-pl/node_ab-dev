@@ -1,3 +1,4 @@
-import { abTSBuilder } from "@allblue/ab-ts-parser";
+import { abTSWatcher } from "@allblue/ab-ts-parser";
+import path from "node:path";
 
-abTSBuilder.watch(".");
+abTSWatcher.watch(path.resolve("."), path.resolve("."));

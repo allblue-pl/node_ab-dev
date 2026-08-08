@@ -1,6 +1,6 @@
 export declare class buildTS_Class {
     constructor();
-    watchTS(fsPath: string): void;
+    watchTS(fsPath: string, onlyValidate?: boolean): void;
 }
 declare const buildTS: buildTS_Class;
 export default buildTS;

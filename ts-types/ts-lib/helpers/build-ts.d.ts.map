@@ -1,0 +1,1 @@
+{"version":3,"file":"build-ts.d.ts","sourceRoot":"","sources":["../../../ts-lib/helpers/build-ts.ts"],"names":[],"mappings":"AAKA,qBAAa,aAAa;IACtB,cAEC;IAED,OAAO,CAAC,MAAM,EAAE,MAAM,EAAE,YAAY,GAAE,OAAe,GAAG,IAAI,CAa3D;CACJ;AACD,QAAA,MAAM,OAAO,eAAsB,CAAC;eACrB,OAAO"}

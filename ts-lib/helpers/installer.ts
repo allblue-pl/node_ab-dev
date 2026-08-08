@@ -436,7 +436,7 @@ class installer_Class {
                 console.log(`Installing dummy dependencies: `, stdout, stderr);
 
                 if (error !== null)
-                    abLog.error(`Error installing dummy dependencies:`, error);
+                    abLog.error(`Error installing dummy dependencies:`, String(error));
 
                 resolve(true);
             });
