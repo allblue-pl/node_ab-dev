@@ -59,7 +59,7 @@ export class abDev_Class {
 
     async validate_Async(pkgPath: string): Promise<void> {
         let abLockInfo = ABLockInfo.Load(pkgPath);
-        if (abLockInfo.type === null) {
+        if (abLockInfo.installType === null) {
             throw new Error(`Cannot determine install type from '.ab-dev-lock' in '${pkgPath}'.` + 
                     " Run 'ab install <type>' again.");
         }
@@ -70,9 +70,9 @@ export class abDev_Class {
             console.warn(`'.ab-dev-lock' not valid in '${pkgPath}'. Re-installing.`);
             // console.log('.ab-dev:      ' + abInfo.getInfoHash());
             // console.log('.ab-dev-lock: ' + abLockInfo.hash);
-            await installer.install_Async(pkgPath, abLockInfo.type, )
+            await installer.install_Async(pkgPath, abLockInfo.installType, )
 
-            let abLockInfo_New = new ABLockInfo(abLockInfo.type, 
+            let abLockInfo_New = new ABLockInfo(abLockInfo.installType, 
                     abInfo.getInfoHash());
             abLockInfo_New.save(pkgPath);
         }

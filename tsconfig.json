@@ -7,14 +7,15 @@
         "emitDeclarationOnly": true,
         "erasableSyntaxOnly": true,
         "module": "nodenext",
-        "outDir": "lib",
+        "noImplicitOverride": true,
+        "outDir": ".",
         "rewriteRelativeImportExtensions": true,
         "rootDir": ".",
         "strict": true,
         "target": "esnext",
         "typeRoots": [
             "./node_modules/@types",
-            "./node_modules/ab-fs-watcher/js-modules",
+            "./node_modules/ab-fs-watcher/js-modules"
         ],
         "types": [
              "anymatch", 
@@ -24,7 +25,6 @@
         "verbatimModuleSyntax": true
     },
     "exclude": [
-        "index.ts",
         "./lib/**/*",
         "./ts-types/**/*",
         "./tests/**/*",

@@ -27,6 +27,7 @@ class validate_Class {
 
             let repo: SimpleGit = simpleGit(depPkgPath_Real);
             let branchSummary = await repo.branchLocal();
+
             if (branchSummary.current !== branch) {
                 console.error(`Repo '${depPkgName}:${branchSummary.current}'` +
                         `is on the wrong branch (expected '${branch}').`);

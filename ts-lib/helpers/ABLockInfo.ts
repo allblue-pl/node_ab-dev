@@ -3,6 +3,17 @@ import fs from "node:fs";
 import path from "node:path";
 
 export default class ABLockInfo {
+    static Clear(pkgPath: string, installType: "link"|"git"): void {
+        let fsPath = path.join(pkgPath, ".ab-dev-lock");
+
+        let jsonStr = JSON.stringify({
+            type: installType,
+            hash: "",
+        }, null, 2);
+
+        fs.writeFileSync(fsPath, jsonStr);
+    }
+
     static Load(pkgPath: string) : ABLockInfo {
         let fsPath = path.join(pkgPath, ".ab-dev-lock");
 
@@ -22,20 +33,26 @@ export default class ABLockInfo {
     }
 
 
-    #type: "link"|"git"|null;
+    #installType: "link"|"git"|null;
     #hash: string|null;
 
     get hash(): string|null {
         return this.#hash;
     }
 
-    get type(): "link"|"git"|null {
-        return this.#type;
+    get installType(): "link"|"git"|null {
+        return this.#installType;
     }
 
-    constructor(type: "link"|"git"|null, hash: string|null) {
-        this.#type = type;
+    constructor(installType: "link"|"git"|null, hash: string|null) {
+        this.#installType = installType;
         this.#hash = hash;
+    }
+
+    delete(pkgPath: string): void {
+        let fsPath = path.join(pkgPath, ".ab-dev-lock");
+        if (fs.existsSync(fsPath))
+            fs.unlinkSync(fsPath);
     }
 
     isValid(abInfo: ABInfo): boolean {
@@ -46,7 +63,7 @@ export default class ABLockInfo {
         let fsPath = path.join(pkgPath, ".ab-dev-lock");
 
         let jsonStr = JSON.stringify({
-            type: this.#type,
+            type: this.#installType,
             hash: this.#hash,
         }, null, 2);
 

@@ -18,6 +18,8 @@ class installer_Class {
 
     async install_Async(pkgPath: string, installType: "link"|"git",
             depPkgName: string|null = null): Promise<void> {
+        ABLockInfo.Clear(pkgPath, installType);
+
         let abInfo = new ABInfo(path.join(pkgPath, '.ab-dev'));
         let depPkgsList: Array<{ pkgName: string, pkgPath: string }> = [];
 
