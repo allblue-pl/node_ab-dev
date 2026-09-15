@@ -191,7 +191,9 @@ class installer_Class {
             try {
                 await repo.clone(abInfo.info.abDependencies[depPkgName].url, 
                         depPkgPath, [ '-b', depPkgInfo.branch ]);
-                console.log(`Cloned repo: '${depPkgName}'.`);                
+                console.log(`Cloned repo test: '${depPkgName}'.`);           
+
+                await this.#installAsync_Git_NPMInstallDev(depPkgPath);     
             } catch (err: any) {
                 abLog.error(`Cannot clone repo '${depPkgName}':`, err.stack);
                 return false;
@@ -205,6 +207,19 @@ class installer_Class {
         // removeDependencies(abInfo, depPkgPath, depPkgName);
 
         return true;
+    }
+
+    #installAsync_Git_NPMInstallDev(depPkgPath: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+                childProcess.exec(`npm install -D`,
+                { cwd: depPkgPath, }, (error, stdout, stderr) => {
+            console.log(`Installing dependencies: `, stdout, stderr);
+
+            if (error !== null)
+                abLog.error(`Error installing dev dependencies:`, String(error));
+
+            resolve();
+        }); });
     }
 
     // async #installAsync_Git_NoCopy(pkgPath: string, abInfo: ABInfo, 
