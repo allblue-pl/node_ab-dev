@@ -15,11 +15,12 @@
         "target": "esnext",
         "typeRoots": [
             "./node_modules/@types",
-            "./node_modules/ab-fs-watcher/js-modules"
+            "./node_modules/ab-matcher/js-types"
         ],
         "types": [
-             "anymatch", 
-             "node"
+             "node",
+             "normalize-path", 
+             "picomatch"
         ],
         "useDefineForClassFields": true,
         "verbatimModuleSyntax": true
