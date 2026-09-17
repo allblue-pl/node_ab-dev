@@ -125,16 +125,16 @@ class installer_Class {
                 dummyPkgDirPath, 'package.json'));
     }
 
-    // async #fixNPMLineEndings(repo: SimpleGit) {
-    //     try {
-    //         let index = await repo.refreshIndex();
+    async #fixNPMLineEndings(repo: SimpleGit) {
+        try {
+            await repo.raw(['update-index', '--refresh']);
 
-    //         await index.addByPath('package.json');
-    //         await index.addByPath('package-lock.json');
-    //     } catch (err) {
-    //         abLog.error(`Cannot fix NPM line ending by adding 'package.json' and 'package-lock.json': `, err);
-    //     }
-    // }
+            await repo.add("package.json");
+            await repo.add('package-lock.json');
+        } catch (err) {
+            abLog.error(`Cannot fix NPM line ending by adding 'package.json' and 'package-lock.json': `, err);
+        }
+    }
 
     #getPkgNodeModulesFiles(pkgPath: string): Array<string> {
         if (!fs.existsSync(pkgPath))
@@ -190,6 +190,7 @@ class installer_Class {
                 console.log(`Cloned repo test: '${depPkgName}'.`);           
 
                 await this.#installAsync_Git_NPMInstallDev(depPkgPath);     
+                await this.#fixNPMLineEndings(repo);
             } catch (err: any) {
                 abLog.error(`Cannot clone repo '${depPkgName}':`, err.stack);
                 return false;
